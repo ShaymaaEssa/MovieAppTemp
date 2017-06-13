@@ -58,6 +58,7 @@ public class MainFragment extends Fragment implements RVMainScreenAdapter.RVItem
 
     MoviePosterClickListener moviePosterClickListener;
     Movie movie;
+    boolean savedState = false;
 
 
     public MainFragment() {
@@ -93,18 +94,14 @@ public class MainFragment extends Fragment implements RVMainScreenAdapter.RVItem
         preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         preferences.registerOnSharedPreferenceChangeListener(this);
 
-        //tablet layout
-        if (getActivity().findViewById(R.id.fragment_mainactivity_detailfragment)!= null){
+
             if (savedInstanceState != null){
                 movie = savedInstanceState.getParcelable("MovieItem");
-                onListItemClick(movie);
+                savedState = true;
             }
-            else {
-                movie = movies.get(0);
-                onListItemClick(movie);
-            }
+
             //rv_movieGrid.findViewHolderForAdapterPosition(0).itemView.performClick();
-        }
+
 
 
 
@@ -122,6 +119,7 @@ public class MainFragment extends Fragment implements RVMainScreenAdapter.RVItem
     public void onResume() {
         super.onResume();
         getMovieData();
+
     }
 
     public void getMovieData() {
@@ -148,6 +146,13 @@ public class MainFragment extends Fragment implements RVMainScreenAdapter.RVItem
 
                 }
                 adapter.setMoviesData(movies);
+
+                if (!savedState)
+                    movie = movies.get(0);
+                //tablet layout
+                if (getActivity().findViewById(R.id.fragment_mainactivity_detailfragment)!= null){
+                    onListItemClick(movie);
+                }
             } catch (Exception e) {
                 Log.e("Main Fragment", "failed to asyc load data");
                 e.printStackTrace();
